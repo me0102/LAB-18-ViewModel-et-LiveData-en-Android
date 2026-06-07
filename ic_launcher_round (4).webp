@@ -1,0 +1,43 @@
+package com.example.viewmodellivedatademoenrichi;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+public class MainActivity extends AppCompatActivity {
+
+    private CounterViewModel viewModel;
+    private TextView tvCount;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // When the screen rotates, onCreate runs again, BUT the ViewModelProvider
+        // is smart enough to give us back our existing ViewModel!
+        setContentView(R.layout.activity_main);
+
+        tvCount = findViewById(R.id.tvCount);
+        Button btnIncrement = findViewById(R.id.btnIncrement);
+        Button btnDecrement = findViewById(R.id.btnDecrement);
+        Button btnReset = findViewById(R.id.btnReset);
+
+        // 1. Retrieve (or create) the ViewModel bound to this Activity's lifecycle
+        viewModel = new ViewModelProvider(this).get(CounterViewModel.class);
+
+        // 2. Observe the LiveData (Lifecycle-aware)
+        // The observer is ONLY triggered if the Activity is active (STARTED or RESUMED).
+        // It automatically cleans itself up to prevent memory leaks!
+        viewModel.getCount().observe(this, newCount -> tvCount.setText(String.valueOf(newCount)));
+
+        // 3. The buttons now ONLY talk to the ViewModel.
+        // Notice there is no updateUI() method here anymore!
+        btnIncrement.setOnClickListener(v -> viewModel.increment());
+        btnDecrement.setOnClickListener(v -> viewModel.decrement());
+        btnReset.setOnClickListener(v -> viewModel.reset());
+    }
+
+    // Notice how we COMPLETELY DELETED onSaveInstanceState!
+    // The ViewModel handles the rotation survival automatically.
+}

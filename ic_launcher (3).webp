@@ -1,0 +1,39 @@
+package com.example.viewmodellivedatademoenrichi;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+public class CounterViewModel extends ViewModel {
+
+    // MutableLiveData = Modifiable internally by the ViewModel
+    private final MutableLiveData<Integer> countLiveData = new MutableLiveData<>();
+
+    public CounterViewModel() {
+        // Initial value set when the ViewModel is first created
+        countLiveData.setValue(0);
+    }
+
+    public void increment() {
+        Integer current = countLiveData.getValue();
+        if (current != null) {
+            countLiveData.setValue(current + 1);  // Automatically notifies the Activity!
+        }
+    }
+
+    public void decrement() {
+        Integer current = countLiveData.getValue();
+        if (current != null) {
+            countLiveData.setValue(current - 1);
+        }
+    }
+
+    public void reset() {
+        countLiveData.setValue(0);
+    }
+
+    // Getter exposed to the Activity (LiveData is Read-Only = Good Security Practice)
+    public LiveData<Integer> getCount() {
+        return countLiveData;
+    }
+}
